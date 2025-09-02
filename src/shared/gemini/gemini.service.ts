@@ -1,34 +1,31 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import {
   ChatMessage,
   ChatCompletionOptions,
   ChatResponse,
   MultiPromptRequest,
-} from './interfaces/openai.interface';
+} from '../openai/interfaces/openai.interface';
 import { PipelineConfigService } from '../pipeline/pipeline-config.service';
 
 @Injectable()
-export class OpenAIService {
-  private readonly logger = new Logger(OpenAIService.name);
-  private readonly openai: OpenAI;
+export class GeminiService {
+  private readonly logger = new Logger(GeminiService.name);
+  private readonly genAI: GoogleGenerativeAI;
 
   constructor(
     private readonly configService: ConfigService,
     private readonly pipelineConfigService: PipelineConfigService,
   ) {
-    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
+    const apiKey = this.configService.get<string>('GEMINI_API_KEY');
 
     if (!apiKey) {
-      throw new Error('OPENAI_API_KEY is not defined in environment variables');
+      throw new Error('GEMINI_API_KEY is not defined in environment variables');
     }
 
-    this.openai = new OpenAI({
-      apiKey: apiKey,
-    });
-
-    this.logger.log('OpenAI client initialized successfully');
+    this.genAI = new GoogleGenerativeAI(apiKey);
+    this.logger.log('Gemini client initialized successfully');
   }
 
   /**
@@ -115,39 +112,45 @@ export class OpenAIService {
     options?: ChatCompletionOptions,
   ): Promise<ChatResponse> {
     try {
-      const defaultOptions = {
-        model: 'gpt-4o-mini',
-        temperature: 0.7,
-        maxTokens: 2000,
-        topP: 1,
-      };
-
-      const finalOptions = { ...defaultOptions, ...options };
-
-      const completion = await this.openai.chat.completions.create({
-        model: finalOptions.model,
-        messages: messages,
-        temperature: finalOptions.temperature,
-        max_tokens: finalOptions.maxTokens,
-        top_p: finalOptions.topP,
+      // Gemini использует gemini-1.5-flash по умолчанию
+      const model = this.genAI.getGenerativeModel({ 
+        model: options?.model || 'gemini-1.5-flash' 
       });
 
-      const response: ChatResponse = {
-        content: completion.choices[0]?.message?.content || '',
+      // Объединяем системное сообщение и пользовательское
+      let finalPrompt = '';
+      
+      const systemMessage = messages.find(msg => msg.role === 'system');
+      const userMessage = messages.find(msg => msg.role === 'user');
+      
+      if (systemMessage) {
+        finalPrompt += `SYSTEM INSTRUCTIONS:\n${systemMessage.content}\n\n`;
+      }
+      
+      if (userMessage) {
+        finalPrompt += `USER REQUEST:\n${userMessage.content}`;
+      }
+
+      this.logger.log('Sending request to Gemini API');
+
+      const result = await model.generateContent(finalPrompt);
+      const response = await result.response;
+      const text = response.text();
+
+      const chatResponse: ChatResponse = {
+        content: text,
         usage: {
-          promptTokens: completion.usage?.prompt_tokens || 0,
-          completionTokens: completion.usage?.completion_tokens || 0,
-          totalTokens: completion.usage?.total_tokens || 0,
+          promptTokens: 0, // Gemini не возвращает детальную информацию об использовании токенов
+          completionTokens: 0,
+          totalTokens: 0,
         },
       };
 
-      this.logger.log(
-        `OpenAI API call completed. Tokens used: ${response.usage.totalTokens}`,
-      );
+      this.logger.log('Gemini API call completed successfully');
 
-      return response;
+      return chatResponse;
     } catch (error) {
-      this.logger.error('Error calling OpenAI API:', error);
+      this.logger.error('Error calling Gemini API:', error);
       throw error;
     }
   }

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CountryInfo } from '../../entities/country-info.entity';
-import { PipelineConfigService } from '../../shared/pipeline/pipeline-config.service';
+import { CountryInfo } from '../../../entities/country-info.entity';
+import { PipelineConfigService } from '../../pipeline/pipeline-config.service';
 
 @Injectable()
 export class CountryInfoUseCase {

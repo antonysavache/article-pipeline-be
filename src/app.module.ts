@@ -1,17 +1,20 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { DatabaseService } from './database/database.service';
 import { CountryInfo } from './entities/country-info.entity';
-import { MasterPrompts } from './entities/master-prompts.entity';
 import { CountryController } from './controllers/country.controller';
-import { MasterPromptController } from './controllers/master-prompt.controller';
-import { CountryInfoUseCase } from './modules/country-info/country-info.use-case';
+import { SkeletonController } from './controllers/skeleton.controller';
+import { PipelineController } from './controllers/pipeline.controller';
 import { PipelineConfigService } from './shared/pipeline/pipeline-config.service';
 import { OpenAIService } from './shared/openai/openai.service';
-import { MasterPromptUseCase } from './shared/master-prompt/master-prompt.use-case';
+import { GeminiService } from './shared/gemini/gemini.service';
+import { Skeleton } from "./shared/utils/skeleton/skeleton.entity";
+import { CountryInfoUseCase } from "./shared/utils/country-info/country-info.use-case";
+import { SkeletonUseCase } from "./shared/utils/skeleton/skeleton.use-case";
+import { InitializationModule } from './shared/initialization/initialization.module';
+import { KeywordDiscoveryGeminiService } from './modules/keyword-discovery/keyword-discovery-gemini.service';
+
 
 @Module({
   imports: [
@@ -32,20 +35,21 @@ import { MasterPromptUseCase } from './shared/master-prompt/master-prompt.use-ca
         rejectUnauthorized: false,
       },
     }),
-    TypeOrmModule.forFeature([CountryInfo, MasterPrompts]),
+    TypeOrmModule.forFeature([
+      CountryInfo,
+      Skeleton,
+    ]),
+    InitializationModule,
   ],
-  controllers: [
-    AppController,
-    CountryController,
-    MasterPromptController,
-  ],
+  controllers: [CountryController, SkeletonController, PipelineController],
   providers: [
-    AppService,
     DatabaseService,
     CountryInfoUseCase,
-    MasterPromptUseCase,
+    SkeletonUseCase,
     PipelineConfigService,
     OpenAIService,
+    GeminiService,
+    KeywordDiscoveryGeminiService,
   ],
 })
 export class AppModule {}

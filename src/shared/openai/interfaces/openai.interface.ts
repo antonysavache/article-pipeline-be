@@ -24,3 +24,7 @@ export interface MultiPromptRequest {
   modulePrompt?: string;
   userTask: string;
 }
+
+export interface PipelineRequest {
+  task: string;
+}

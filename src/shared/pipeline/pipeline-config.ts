@@ -1,13 +1,19 @@
 interface PipelineConfig {
   country: string;
   countryInfo: string;
-  masterPrompt: string;
-  articleConfig: string;
+  skeleton: string;
+  currentSkeletonKey: string;
+  enrichedSkeleton: string;
+  originalArticle: string;
+  translatedArticle: string;
 }
 
 export const pipelineConfig: PipelineConfig = {
   country: '',
   countryInfo: '',
-  masterPrompt: '',
-  articleConfig: '',
+  skeleton: '',
+  currentSkeletonKey: '',
+  enrichedSkeleton: '',
+  originalArticle: '',
+  translatedArticle: '',
 };

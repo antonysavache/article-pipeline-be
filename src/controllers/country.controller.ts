@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { CountryInfoUseCase } from '../modules/country-info/country-info.use-case';
+import {CountryInfoUseCase} from "../shared/utils/country-info/country-info.use-case";
 
 @Controller('country')
 export class CountryController {

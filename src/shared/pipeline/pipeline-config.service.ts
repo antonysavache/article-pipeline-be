@@ -7,29 +7,76 @@ export class PipelineConfigService {
   setCountryInfo({ country, countryInfo }: SetCountryInfoParams): void {
     pipelineConfig.country = country;
     pipelineConfig.countryInfo = countryInfo;
-
-    // Выводим весь объект конфига в консоль
-    console.log('Pipeline Config after setting country info:', pipelineConfig);
   }
 
-  setMasterPrompt(masterPrompt: string): void {
-    pipelineConfig.masterPrompt = masterPrompt;
-
-    // Выводим весь объект конфига в консоль
-    console.log('Pipeline Config after setting master prompt:', pipelineConfig);
+  getCountryInfo(): string {
+    return pipelineConfig.countryInfo;
   }
 
-  getMasterPrompt(): string {
-    return pipelineConfig.masterPrompt;
+  getCountry(): string {
+    return pipelineConfig.country;
   }
 
-  setArticleConfig(articleConfig: string): void {
-    pipelineConfig.articleConfig = articleConfig;
+  setSkeleton(skeleton: string): void {
+    pipelineConfig.skeleton = skeleton;
+  }
 
-    // Выводим весь объект конфига в консоль
-    console.log(
-      'Pipeline Config after setting article config:',
-      pipelineConfig,
-    );
+  getSkeleton(): string {
+    return pipelineConfig.skeleton;
+  }
+
+  setCurrentSkeletonKey(key: string): void {
+    pipelineConfig.currentSkeletonKey = key;
+  }
+
+  getCurrentSkeletonKey(): string {
+    return pipelineConfig.currentSkeletonKey;
+  }
+
+  setEnrichedSkeleton(enrichedSkeleton: string): void {
+    pipelineConfig.enrichedSkeleton = enrichedSkeleton;
+  }
+
+  getEnrichedSkeleton(): string {
+    return pipelineConfig.enrichedSkeleton;
+  }
+
+  setOriginalArticle(article: string): void {
+    pipelineConfig.originalArticle = article;
+  }
+
+  getOriginalArticle(): string {
+    return pipelineConfig.originalArticle;
+  }
+
+  setTranslatedArticle(article: string): void {
+    pipelineConfig.translatedArticle = article;
+  }
+
+  getTranslatedArticle(): string {
+    return pipelineConfig.translatedArticle;
+  }
+
+  // Статус для фронтенда
+  getStatusForFrontend() {
+    return {
+      country: pipelineConfig.country,
+      skeletonKey: pipelineConfig.currentSkeletonKey,
+      hasEnrichedSkeleton: !!pipelineConfig.enrichedSkeleton,
+      hasOriginalArticle: !!pipelineConfig.originalArticle,
+      hasTranslatedArticle: !!pipelineConfig.translatedArticle,
+    };
+  }
+
+  // Полезный метод для получения всего состояния pipeline
+  getPipelineState() {
+    return {
+      country: pipelineConfig.country,
+      countryInfo: pipelineConfig.countryInfo,
+      skeleton: pipelineConfig.skeleton,
+      enrichedSkeleton: pipelineConfig.enrichedSkeleton,
+      originalArticle: pipelineConfig.originalArticle,
+      translatedArticle: pipelineConfig.translatedArticle,
+    };
   }
 }

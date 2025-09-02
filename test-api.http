@@ -1,0 +1,80 @@
+# API Testing File for Article Pipeline Backend
+# Use with VS Code REST Client extension or similar
+
+### Test server status
+GET http://localhost:4000
+
+### 1. Get available skeletons
+GET http://localhost:4000/skeleton/available
+
+### 2. Set country (UK)  
+GET http://localhost:4000/country/uk
+
+### 3. Set skeleton
+POST http://localhost:4000/skeleton/blog/set
+
+### 4. Check pipeline status
+GET http://localhost:4000/pipeline/status
+
+### 5. Enrich skeleton with keywords
+POST http://localhost:4000/pipeline/enrich
+Content-Type: application/json
+
+{
+  "topic": "best banks in UK 2025",
+  "language": "en",
+  "geo": "uk"
+}
+
+### 6. Generate article (original + translation)
+POST http://localhost:4000/pipeline/generate
+Content-Type: application/json
+
+{
+  "topic": "best banks in UK 2025",
+  "originalLanguage": "en",
+  "needTranslation": true,
+  "translationLanguage": "ru"
+}
+
+### 7. Revise original article
+POST http://localhost:4000/pipeline/revise
+Content-Type: application/json
+
+{
+  "revisionsRequest": "Make the introduction shorter and add more specific examples",
+  "targetLanguage": "original"
+}
+
+### 8. Revise translated article
+POST http://localhost:4000/pipeline/revise
+Content-Type: application/json
+
+{
+  "revisionsRequest": "Добавить больше конкретных примеров и упростить язык",
+  "targetLanguage": "translated"
+}
+
+### Test with different skeleton (Exchange Review)
+POST http://localhost:4000/skeleton/exchange-review/set
+
+### Test enrichment with exchange topic
+POST http://localhost:4000/pipeline/enrich
+Content-Type: application/json
+
+{
+  "topic": "Binance UK review 2025",
+  "language": "en",
+  "geo": "uk"
+}
+
+### Generate exchange review article
+POST http://localhost:4000/pipeline/generate
+Content-Type: application/json
+
+{
+  "topic": "Binance UK comprehensive review 2025",
+  "originalLanguage": "en",
+  "needTranslation": true,
+  "translationLanguage": "ru"
+}

@@ -11,7 +11,6 @@ export class DatabaseService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      // DataSource уже инициализирован через TypeOrmModule.forRoot()
       if (this.dataSource.isInitialized) {
         console.log('Database connection established successfully');
         await this.testConnection();
