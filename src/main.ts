@@ -5,16 +5,12 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // Enable CORS for frontend
+  // Enable CORS for frontend - максимально открытый для тестирования
   app.enableCors({
-    origin: [
-      'http://localhost:4200',  // Angular dev server (локальный фронтенд)
-      'http://localhost:3000', 
-      'http://localhost:3001',
-    ],
+    origin: true, // Разрешить любые origins
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
 
   // Enable validation pipes
