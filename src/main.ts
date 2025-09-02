@@ -7,8 +7,14 @@ async function bootstrap() {
   
   // Enable CORS for frontend
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'], // Add your frontend URLs
+    origin: [
+      'http://localhost:4200',  // Angular dev server (локальный фронтенд)
+      'http://localhost:3000', 
+      'http://localhost:3001',
+    ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   // Enable validation pipes
@@ -17,6 +23,6 @@ async function bootstrap() {
     transform: true,
   }));
 
-  await app.listen(process.env.PORT ?? 4000); // Change port to 4000 to avoid conflicts
+  await app.listen(process.env.PORT ?? 4000);
 }
 bootstrap();
